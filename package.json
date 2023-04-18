@@ -1,0 +1,55 @@
+{
+  "name": "t3-2-poc",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "build:server": "tsc --project tsconfig.server.json && tsc-alias -p tsconfig.server.json",
+    "dev:wss": "tsx watch src/server/wss.ts --tsconfig tsconfig.server.json",
+    "dev:next": "next dev",
+    "dev": "NODE_ENV=development run-p dev:*",
+    "postinstall": "prisma generate",
+    "lint": "next lint",
+    "start": "NODE_ENV=production node dist/server.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.11.0",
+    "@tanstack/react-query": "^4.28.0",
+    "@trpc/client": "^10.18.0",
+    "@trpc/next": "^10.18.0",
+    "@trpc/react-query": "^10.18.0",
+    "@trpc/server": "^10.18.0",
+    "next": "^13.2.4",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "redis": "^4.6.5",
+    "superjson": "1.12.2",
+    "ts-node": "^10.9.1",
+    "tsx": "^3.12.6",
+    "ws": "^8.13.0",
+    "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "@types/eslint": "^8.21.3",
+    "@types/node": "^18.15.5",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@types/ws": "^8.5.4",
+    "@typescript-eslint/eslint-plugin": "^5.56.0",
+    "@typescript-eslint/parser": "^5.56.0",
+    "eslint": "^8.36.0",
+    "eslint-config-next": "^13.2.4",
+    "npm-run-all": "^4.1.5",
+    "prisma": "^4.11.0",
+    "ts-node-dev": "^2.0.0",
+    "tsc-alias": "^1.8.5",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.0.2"
+  },
+  "ct3aMetadata": {
+    "initVersion": "7.10.3"
+  },
+  "bundleDependencies": [
+    "npm-run-all"
+  ]
+}
