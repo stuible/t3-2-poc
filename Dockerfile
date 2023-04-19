@@ -12,8 +12,6 @@ COPY prisma ./prisma
 
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml\* ./
 
-RUN npx prisma generate
-
 RUN \
     if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
     elif [ -f package-lock.json ]; then npm ci; \
@@ -46,6 +44,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/prisma ./prisma
 COPY . .
+
+RUN npx prisma generate
 
 # ENV NEXT_TELEMETRY_DISABLED 1
 
