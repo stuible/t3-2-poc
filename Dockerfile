@@ -46,6 +46,8 @@ COPY --from=deps /app/prisma ./prisma
 COPY . .
 
 RUN npx prisma generate
+RUN npx prisma migrate deploy
+
 
 # ENV NEXT_TELEMETRY_DISABLED 1
 
