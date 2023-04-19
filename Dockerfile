@@ -23,7 +23,7 @@ RUN \
 
 FROM node:18-alpine AS builder
 RUN apk add --no-cache libc6-compat openssl1.1-compat
-ARG DATABASE_URL
+ENV DATABASE_URL=
 ARG NEXT_PUBLIC_CLIENTVAR
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
