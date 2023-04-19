@@ -4,8 +4,6 @@ FROM node:18-alpine AS deps
 RUN apk add --no-cache libc6-compat openssl1.1-compat
 WORKDIR /app
 
-ARG DATABASE_URL
-
 # Install Prisma Client - remove if not using Prisma
 
 COPY prisma ./prisma
@@ -25,8 +23,23 @@ RUN \
 
 FROM node:18-alpine AS builder
 RUN apk add --no-cache libc6-compat openssl1.1-compat
+
+# ARG DATABASE_URL ${DATABASE_URL}
+# ARG WAIT_TIMES_API_TOKEN ${WAIT_TIMES_API_TOKEN}
+# ARG REDIS_URL ${REDIS_URL}
+# ARG NEXT_PUBLIC_WS_URL ${NEXT_PUBLIC_WS_URL}
+
 ARG DATABASE_URL
-ARG NEXT_PUBLIC_CLIENTVAR
+ARG WAIT_TIMES_API_TOKEN
+ARG REDIS_URL
+ARG NEXT_PUBLIC_WS_URL
+
+ENV DATABASE_URL ${DATABASE_URL}
+ENV WAIT_TIMES_API_TOKEN ${WAIT_TIMES_API_TOKEN}
+ENV REDIS_URL  ${REDIS_URL}
+ENV NEXT_PUBLIC_WS_URL ${NEXT_PUBLIC_WS_URL}
+
+
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/prisma ./prisma
@@ -36,7 +49,7 @@ COPY . .
 
 RUN \
     if [ -f yarn.lock ]; then SKIP_ENV_VALIDATION=1 yarn build; \
-    elif [ -f package-lock.json ]; then SKIP_ENV_VALIDATION=1 npm run build; \
+    elif [ -f package-lock.json ]; then SKIP_ENV_VALIDATION=0 npm run build; \
     elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && SKIP_ENV_VALIDATION=1 pnpm run build; \
     else echo "Lockfile not found." && exit 1; \
     fi
@@ -46,6 +59,16 @@ RUN \
 FROM node:18-alpine AS runner
 RUN apk add --no-cache libc6-compat openssl1.1-compat
 WORKDIR /app
+
+# ARG DATABASE_URL ${DATABASE_URL}
+# ARG WAIT_TIMES_API_TOKEN ${WAIT_TIMES_API_TOKEN}
+# ARG REDIS_URL ${REDIS_URL}
+# ARG NEXT_PUBLIC_WS_URL ${NEXT_PUBLIC_WS_URL}
+
+ARG DATABASE_URL
+ARG WAIT_TIMES_API_TOKEN
+ARG REDIS_URL
+ARG NEXT_PUBLIC_WS_URL
 
 ENV NODE_ENV production
 

@@ -6,18 +6,21 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_CLIENTVAR: "clientvar"
-        DATABASE_URL: "file:./db.sqlite"
+        NEXT_PUBLIC_CLIENTVAR: "$NEXT_PUBLIC_CLIENTVAR"
+        DATABASE_URL: "$DATABASE_URL"
+        NEXT_PUBLIC_WS_URL: "$NEXT_PUBLIC_WS_URL"
     working_dir: /app
     ports:
       - "3000:3000"
       - "3001:3001"
     image: t3-app
-    environment:
-      - DATABASE_URL=file:./db.sqlite
-      - WAIT_TIMES_API_TOKEN=password
-      - REDIS_URL=redis://redis:6379
-      - NEXT_PUBLIC_WS_URL=ws://localhost:3000
+    env_file:
+      - .docker.env
+    # environment:
+    #   DATABASE_URL: "file:./db.sqlite"
+    #   WAIT_TIMES_API_TOKEN: password
+    #   REDIS_URL: redis://redis:6379
+    #   NEXT_PUBLIC_WS_URL: ws://localhost:3000
   redis:
     image: 'bitnami/redis:latest'
     environment:
