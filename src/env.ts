@@ -17,6 +17,7 @@ const server = z.object({
  */
 const client = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
+  NEXT_PUBLIC_WEBSOCKET_URL: z.string().url().default("ws://localhost:3001"),
 });
 
 /**
@@ -29,6 +30,7 @@ const processEnv: Record<keyof z.infer<typeof server> | keyof z.infer<typeof cli
   NODE_ENV: process.env.NODE_ENV,
   WAIT_TIMES_API_TOKEN: process.env.WAIT_TIMES_API_TOKEN,
   REDIS_URL: process.env.REDIS_URL,
+  NEXT_PUBLIC_WEBSOCKET_URL: process.env.NEXT_PUBLIC_WEBSOCKET_URL,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 

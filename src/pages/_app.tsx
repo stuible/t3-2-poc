@@ -7,16 +7,23 @@ import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import { useState } from "react";
 
-export interface CustomPageProps {
-  setMeta: Function
+export interface Meta {
+  title: string
 }
+
+type SetMeta = (meta: Meta) => void;
+
+export interface CustomPageProps {
+  setMeta: SetMeta
+}
+
 
 const MyApp: AppType = ({ Component, pageProps }) => {
 
-  const [meta, setMeta] = useState<object>({});
+  const [meta, setMeta] = useState<Meta | null>(null);
 
 
-  const handleOnMeta = (meta: { title: string }) => {
+  const handleOnMeta = (meta: Meta) => {
     console.log("Received custom info from page component:", meta);
     setMeta(meta);
   };

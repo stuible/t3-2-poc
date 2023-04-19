@@ -4,7 +4,7 @@ import Head from "next/head";
 import Link from "next/link";
 
 import { createProxySSGHelpers } from '@trpc/react-query/ssg';
-import { createContext } from 'server/context';
+// import { createContext } from 'server/context';
 import { getLatestReport } from "~/server/prisma";
 import { prisma } from "~/server/db";
 
@@ -44,7 +44,6 @@ export async function getStaticProps() {
 }
 
 const Home: NextPage<HomePageProps> = ({ setMeta, initialLatestReport }) => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
 
   const [latestWaitTimesReport, setLatestWaitTimesReport] = useState<WaitTimeReportWithWaitTimes | undefined>(undefined);
 
@@ -83,11 +82,6 @@ const Home: NextPage<HomePageProps> = ({ setMeta, initialLatestReport }) => {
 
   return (
     <>
-      <div>
-        <p className={styles.showcaseText}>
-          {hello.data ? hello.data.greeting : "Loading tRPC query..."}
-        </p>
-      </div>
       <h2>Emergency Departments</h2>
       <p>Last Updated {latestWaitTimesReport?.createdAt?.toString()}</p>
       <ol className={styles.emergencyDepartmentList}>
