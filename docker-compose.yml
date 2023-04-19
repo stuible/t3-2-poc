@@ -13,7 +13,7 @@ services:
       - "3001:3001"
     image: t3-app
     environment:
-      - DATABASE_URL=database_url_goes_here
+      - DATABASE_URL="file:./db.sqlite"
   redis:
     image: 'bitnami/redis:latest'
     environment:
