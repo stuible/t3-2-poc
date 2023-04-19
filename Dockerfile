@@ -22,6 +22,7 @@ RUN \
 ##### BUILDER
 
 FROM node:18-alpine AS builder
+RUN apk add --no-cache libc6-compat openssl1.1-compat
 ARG DATABASE_URL
 ARG NEXT_PUBLIC_CLIENTVAR
 WORKDIR /app
