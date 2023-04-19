@@ -6,8 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        DATABASE_URL: "$DATABASE_URL"
-        NEXT_PUBLIC_WS_URL: "$NEXT_PUBLIC_WS_URL"
+        DATABASE_URL: "file:./db.sqlite"
+        NEXT_PUBLIC_WS_URL: "ws://localhost:3000"
     working_dir: /app
     ports:
       - "3000:3000"
