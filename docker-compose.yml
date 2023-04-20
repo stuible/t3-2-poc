@@ -8,6 +8,8 @@ services:
       args:
         - DATABASE_URL=${DATABASE_URL}
         - NEXT_PUBLIC_WS_URL=${NEXT_PUBLIC_WS_URL}
+        - REDIS_URL=${REDIS_URL}
+        - WAIT_TIMES_API_TOKEN=${WAIT_TIMES_API_TOKEN}
     working_dir: /app
     ports:
       - "3000:3000"
