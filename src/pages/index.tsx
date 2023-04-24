@@ -1,6 +1,5 @@
 import styles from "~/styles/pages/index.module.css";
-import { GetServerSidePropsContext, GetStaticPropsContext, type NextPage } from "next";
-import Head from "next/head";
+import { type NextPage } from "next";
 import Link from "next/link";
 
 // import { createContext } from 'server/context';
@@ -64,12 +63,12 @@ const Home: NextPage<HomePageProps> = ({ initialLatestReport }) => {
 
   return (
     <Layout pageTitle="Home">
-      <h2 className="text-xl">Emergency Departments</h2>
-      <p className="mb-4">Last Updated {latestWaitTimesReport?.createdAt?.toString()}</p>
+      <h2 className="text-2xl">Emergency Departments</h2>
+      <p className="mb-10 text-sm text-gray-400">Last Updated {latestWaitTimesReport?.createdAt?.toString()}</p>
       <ol className="flex flex-col space-y-4">
         {latestWaitTimesReport?.waitTimes.map(waitTime => (
           <li key={waitTime.id} >
-            <h3 className="text-lg">{waitTime.emergencyDepartment}</h3>
+            <h3 className="text-xl">{waitTime.emergencyDepartment}</h3>
             <p>Wait Time: {waitTime.waitTimeMinutes} minutes</p>
           </li>
         ))}
