@@ -12,6 +12,7 @@ import { api, } from "~/utils/api";
 import { CustomPageProps } from "./_app";
 import { useEffect, useState } from "react";
 import type { WaitTimeReport, WaitTime } from "@prisma/client";
+import Layout from "~/components/Layout";
 
 
 interface WaitTimeReportWithWaitTimes extends WaitTimeReport {
@@ -34,22 +35,16 @@ export async function getStaticProps() {
     props: {
       initialLatestReport: JSON.parse(JSON.stringify(latestReport)),
     },
-    // Next.js will attempt to re-generate the page:
-    // - When a request comes in
-    // - At most once every 30 seconds
     // revalidate: 30, // In seconds
   }
 }
 
-const Home: NextPage<HomePageProps> = ({ setMeta, initialLatestReport }) => {
+const Home: NextPage<HomePageProps> = ({ initialLatestReport }) => {
 
   const [latestWaitTimesReport, setLatestWaitTimesReport] = useState<WaitTimeReportWithWaitTimes | undefined>(initialLatestReport);
 
   useEffect(() => {
     // Automatically pass info to parent when component mounts
-    setMeta({
-      title: 'Home'
-    })
 
   }, []); // Empty dependency array to run the effect only once, on mount
 
@@ -68,18 +63,18 @@ const Home: NextPage<HomePageProps> = ({ setMeta, initialLatestReport }) => {
 
 
   return (
-    <>
-      <h2>Emergency Departments</h2>
-      <p>Last Updated {latestWaitTimesReport?.createdAt?.toString()}</p>
-      <ol className={styles.emergencyDepartmentList}>
+    <Layout pageTitle="Home">
+      <h2 className="text-xl">Emergency Departments</h2>
+      <p className="mb-4">Last Updated {latestWaitTimesReport?.createdAt?.toString()}</p>
+      <ol className="flex flex-col space-y-4">
         {latestWaitTimesReport?.waitTimes.map(waitTime => (
           <li key={waitTime.id} >
-            <h3>{waitTime.emergencyDepartment}</h3>
+            <h3 className="text-lg">{waitTime.emergencyDepartment}</h3>
             <p>Wait Time: {waitTime.waitTimeMinutes} minutes</p>
           </li>
         ))}
       </ol>
-    </>
+    </Layout>
   );
 };
 
