@@ -18,6 +18,7 @@ const config = {
         "@typescript-eslint/no-unsafe-argument": "warn",
         "@typescript-eslint/restrict-template-expressions": "off",
         "@typescript-eslint/no-unsafe-member-access": "warn",
+        "@typescript-eslint/no-empty-interface": "warn",
       }
     },
   ],
