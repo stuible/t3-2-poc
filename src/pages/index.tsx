@@ -3,7 +3,6 @@ import { GetServerSidePropsContext, GetStaticPropsContext, type NextPage } from 
 import Head from "next/head";
 import Link from "next/link";
 
-import { createProxySSGHelpers } from '@trpc/react-query/ssg';
 // import { createContext } from 'server/context';
 import { getLatestReport } from "~/server/prisma";
 import { prisma } from "~/server/db";
@@ -20,7 +19,7 @@ interface WaitTimeReportWithWaitTimes extends WaitTimeReport {
 }
 
 interface HomePageProps extends CustomPageProps {
-  initialLatestReport: string;
+  initialLatestReport: WaitTimeReportWithWaitTimes;
 }
 
 // This function gets called at build time on server-side.
@@ -29,23 +28,22 @@ interface HomePageProps extends CustomPageProps {
 export async function getStaticProps() {
   const latestReport = await getLatestReport({ prisma })
 
-  console.log('------------')
-  console.log(latestReport)
+  console.log('Genererating ServerSide Static Props')
 
   return {
     props: {
-      initialLatestReport: JSON.stringify(latestReport),
+      initialLatestReport: JSON.parse(JSON.stringify(latestReport)),
     },
     // Next.js will attempt to re-generate the page:
     // - When a request comes in
-    // - At most once every 10 seconds
-    revalidate: 10, // In seconds
+    // - At most once every 30 seconds
+    revalidate: 30, // In seconds
   }
 }
 
 const Home: NextPage<HomePageProps> = ({ setMeta, initialLatestReport }) => {
 
-  const [latestWaitTimesReport, setLatestWaitTimesReport] = useState<WaitTimeReportWithWaitTimes | undefined>(undefined);
+  const [latestWaitTimesReport, setLatestWaitTimesReport] = useState<WaitTimeReportWithWaitTimes | undefined>(initialLatestReport);
 
   useEffect(() => {
     // Automatically pass info to parent when component mounts
@@ -53,30 +51,19 @@ const Home: NextPage<HomePageProps> = ({ setMeta, initialLatestReport }) => {
       title: 'Home'
     })
 
-    setLatestWaitTimesReport(JSON.parse(initialLatestReport));
   }, []); // Empty dependency array to run the effect only once, on mount
 
 
 
-
-
-
-
-
-  // setLatestCatFact(`Loading`)
-
   api.waitTimes.onReport.useSubscription(undefined, {
     onData(data) {
-      console.log(data);
+      // console.log(data);
       setLatestWaitTimesReport(data as WaitTimeReportWithWaitTimes);
     },
     onError(error) {
       console.error("Error:", error);
     },
   });
-
-  // const factQuery = api.catFact.fact.useQuery();
-  // const initialFact = factQuery.data?.fact;
 
 
 
