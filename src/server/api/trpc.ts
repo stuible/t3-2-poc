@@ -33,9 +33,11 @@ type CreateContextOptions = Record<string, never>;
  *
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
-const createInnerTRPCContext = (_opts: CreateContextOptions) => {
+const createInnerTRPCContext = (_opts: CreateContextOptions | NodeHTTPCreateContextFnOptions<IncomingMessage, ws> | CreateNextContextOptions) => {
+  const res = _opts.res;
   return {
     prisma,
+    res
   };
 };
 
@@ -46,7 +48,7 @@ const createInnerTRPCContext = (_opts: CreateContextOptions) => {
  * @see https://trpc.io/docs/context
  */
 export const createTRPCContext = (_opts: CreateNextContextOptions | NodeHTTPCreateContextFnOptions<IncomingMessage, ws>) => {
-  return createInnerTRPCContext({});
+  return createInnerTRPCContext(_opts);
 };
 
 /**

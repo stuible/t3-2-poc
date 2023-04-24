@@ -9,6 +9,7 @@ import { getLatestReport } from "~/server/prisma";
 
 import { createClient } from 'redis';
 import { env } from "~/env";
+import { NextApiResponse } from "next";
 
 
 const redisClient = createClient({
@@ -18,7 +19,9 @@ const redisClient = createClient({
 redisClient.on('error', err => console.log('Redis Client Error', err));
 
 
-
+function isNextApiResponse(res: any): res is NextApiResponse {
+    return typeof res === 'object' && 'send' in res && 'json' in res && 'status' in res;
+}
 
 export const waitTimesRouter = createTRPCRouter({
     latestReport: publicProcedure.query(async ({ ctx }) => {
@@ -61,7 +64,16 @@ export const waitTimesRouter = createTRPCRouter({
             });
 
             await redisClient.publish("new-waittimes-report", JSON.stringify(waitTimeReport));
-            // console.log(`after emit`);
+
+
+            // Generate Static Props for Homepage when a new report is added
+            try {
+                const res: NextApiResponse | null = isNextApiResponse(ctx.res) ? ctx.res : null;
+                res?.revalidate("/");
+            } catch (error) {
+                console.log(error)
+            }
+
 
             return waitTimeReport;
         }),
