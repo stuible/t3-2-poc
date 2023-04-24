@@ -93,7 +93,7 @@ export const waitTimesRouter = createTRPCRouter({
         return observable<WaitTimeReport>((emit) => {
             // define a listener function to handle incoming messages
             const listener = (message: string, channel: string) => {
-                console.log(`Received message on channel ${channel}: ${message}`);
+                // console.log(`Received message on channel ${channel}: ${message}`);
 
                 if (channel === "new-waittimes-report") {
                     const fact = JSON.parse(message);
