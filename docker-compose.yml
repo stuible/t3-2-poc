@@ -16,7 +16,7 @@ services:
       - "3001:3001"
     image: t3-app
     env_file:
-      - .docker.env
+      - .env
     # environment:
     #   DATABASE_URL: "file:./db.sqlite"
     #   WAIT_TIMES_API_TOKEN: password
