@@ -31,7 +31,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <>
       <Head>
-        <title>EDWT POC - {meta?.title}</title>
+        <title>EDWT POC</title>
         <meta name="description" content="EDWT" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
