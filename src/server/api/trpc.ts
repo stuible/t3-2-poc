@@ -108,7 +108,7 @@ import { env } from "~/env";
 
 const isAuthed = t.middleware(({ ctx, next, rawInput }) => {
   const { token } = rawInput as { token: string };
-  console.log(token)
+
   if (token !== env.WAIT_TIMES_API_TOKEN) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }

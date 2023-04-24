@@ -37,8 +37,9 @@ export const waitTimesRouter = createTRPCRouter({
         )
         .mutation(async ({ input, ctx }) => {
 
+            // Connect to redis if not connected
             if (!redisClient.isReady) {
-                console.log("Redis client is not connected!");
+                // console.log("Redis client is not connected!");
                 await redisClient.connect();
             }
 
@@ -60,7 +61,7 @@ export const waitTimesRouter = createTRPCRouter({
             });
 
             await redisClient.publish("new-waittimes-report", JSON.stringify(waitTimeReport));
-            console.log(`after emit`);
+            // console.log(`after emit`);
 
             return waitTimeReport;
         }),
