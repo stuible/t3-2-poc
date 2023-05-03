@@ -2,9 +2,15 @@ import styles from "~/styles/pages/index.module.css";
 import { type NextPage } from "next";
 import Link from "next/link";
 
+import { DocumentRenderer } from '@keystone-6/document-renderer';
+
 // import { createContext } from 'server/context';
 import { getLatestReport } from "~/server/prisma";
 import { prisma } from "~/server/db";
+
+import client from "~/gql/client";
+import GetFAQ from '~/gql/queries/GetFAQ.gql'
+import { Faq } from "~/gql/types";
 
 
 import { api, } from "~/utils/api";
@@ -19,28 +25,34 @@ interface WaitTimeReportWithWaitTimes extends WaitTimeReport {
 }
 
 interface FaqPageProps extends CustomPageProps {
-
+  FAQ: Faq
 }
 
 // This function gets called at build time on server-side.
 // It may be called again, on a serverless function, if
 // revalidation is enabled and a new request comes in
-// export async function getStaticProps() {
+export async function getStaticProps() {
+  console.log('Genererating ServerSide Static Props for FAQ')
 
-// }
+  const { data: { fAQ: FAQ } } = await client.query({
+    query: GetFAQ,
+  });
 
-const Home: NextPage<FaqPageProps> = ({ }) => {
+
+  return {
+    props: {
+      FAQ: FAQ
+    }
+  }
+}
+
+const Home: NextPage<FaqPageProps> = ({ FAQ }) => {
 
 
   return (
     <Layout pageTitle="FAQ">
-      <h2 className="text-2xl mb-10">FAQ</h2>
-      <ul>
-        <li>Question</li>
-        <li>Question</li>
-        <li>Question</li>
-        <li>Question</li>
-      </ul>
+      <h2 className="text-2xl mb-10">{FAQ.title}</h2>
+      {FAQ.faq ? <DocumentRenderer document={FAQ.faq.document} /> : false}
     </Layout>
   );
 };

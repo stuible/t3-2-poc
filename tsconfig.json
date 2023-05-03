@@ -30,6 +30,7 @@
   "include": [
     ".eslintrc.cjs",
     "next-env.d.ts",
+    "src/gql/graphql.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "**/*.cjs",

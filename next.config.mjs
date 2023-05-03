@@ -18,5 +18,16 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+
+  // In order to use .graphql files in Next.js, we have to configure the webpack configuration
+  webpack: (config, options) => {
+    config.module.rules.push({
+      test: /\.(graphql|gql)/,
+      exclude: /node_modules/,
+      loader: "graphql-tag/loader"
+    });
+
+    return config;
+  }
 };
 export default config;

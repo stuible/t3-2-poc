@@ -1,0 +1,13 @@
+query GetEmergencyDepartments {
+  emergencyDepartments {
+    id
+    name
+    editorsCount
+    description
+    audience
+    address
+    phone
+    slug
+    website
+  }
+}

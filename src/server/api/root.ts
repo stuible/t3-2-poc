@@ -1,5 +1,6 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 import { waitTimesRouter } from "~/server/api/routers/waitTimes";
+import { cacheRouter } from "./routers/cache";
 
 /**
  * This is the primary router for your server.
@@ -8,6 +9,7 @@ import { waitTimesRouter } from "~/server/api/routers/waitTimes";
  */
 export const appRouter = createTRPCRouter({
   waitTimes: waitTimesRouter,
+  cache: cacheRouter,
 });
 
 // export type definition of API

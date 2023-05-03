@@ -4,7 +4,7 @@ import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/
 import { observable } from '@trpc/server/observable';
 
 import { PrismaClient, WaitTimeReport } from "@prisma/client";
-import { getLatestReport } from "~/server/prisma";
+import { getLatestReport, getLatestWaitTimes } from "~/server/prisma";
 
 
 import { createClient } from 'redis';
@@ -28,6 +28,14 @@ export const waitTimesRouter = createTRPCRouter({
 
         return await getLatestReport({ prisma: ctx.prisma });
     }),
+    latestWaitTimes: publicProcedure.input(
+        z.object({
+            emergencyDepartments: z.array(z.string().min(1))
+        })
+    )
+        .query(async ({ input, ctx }) => {
+            return await getLatestWaitTimes({ emergencyDepartmentSlugs: input.emergencyDepartments, prisma: ctx.prisma });
+        }),
     addReport: protectedProcedure
         .input(
             z.object({

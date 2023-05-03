@@ -1,0 +1,9 @@
+query FAQ {
+  fAQ {
+    id
+    title
+    faq {
+      document
+    }
+  }
+}
