@@ -3,11 +3,10 @@ import { type NextPage } from "next";
 import Link from "next/link";
 
 // import { createContext } from 'server/context';
-import { getLatestReport } from "~/server/prisma";
+import { getLatestWaitTimes } from "~/server/prisma";
 import { prisma } from "~/server/db";
 
-import { DocumentNode } from "graphql";
-import gql from "graphql-tag";
+
 import client from "~/gql/client";
 import GetEmergencyDepartments from '~/gql/queries/GetEmergencyDepartments.gql'
 
@@ -19,7 +18,7 @@ import { CustomPageProps } from "./_app";
 import { useEffect, useState } from "react";
 import type { WaitTimeReport, WaitTime } from "@prisma/client";
 import Layout from "~/components/Layout";
-import { EmergencyDepartment } from "~/gql/types";
+import { EmergencyDepartment, Maybe } from "~/gql/types";
 import ActionButton from "~/components/ui/ActionButton";
 
 interface WaitTimeReportWithWaitTimes extends WaitTimeReport {
@@ -27,7 +26,7 @@ interface WaitTimeReportWithWaitTimes extends WaitTimeReport {
 }
 
 interface HomePageProps extends CustomPageProps {
-  initialLatestReport: WaitTimeReportWithWaitTimes;
+  initialLatestWaitTimes: WaitTime[];
   emergencyDepartments: EmergencyDepartment[]
 }
 
@@ -37,29 +36,37 @@ interface HomePageProps extends CustomPageProps {
 export async function getStaticProps() {
   console.log('Genererating ServerSide Static Props for Homepage')
 
-  const latestReport = await getLatestReport({ prisma })
-
-
-  const { data: { emergencyDepartments } } = await client.query({
+  // Get all emergency departments from CMS
+  const { data: { emergencyDepartments } }: { data: { emergencyDepartments: EmergencyDepartment[] } } = await client.query({
     query: GetEmergencyDepartments,
   });
 
-  console.log(emergencyDepartments)
+  // console.log(emergencyDepartments)
 
+  // Request the latest wait times for each Emergency Department in the CMS
+  const latestWaitTimes = await getLatestWaitTimes({
+    prisma,
+    emergencyDepartmentSlugs: emergencyDepartments.map(x => x.slug).filter((x: Maybe<string> | undefined): x is string => {
+      return !!x
+    })
+  })
+
+
+  // console.log(latestWaitTimes)
 
 
   return {
     props: {
-      initialLatestReport: JSON.parse(JSON.stringify(latestReport)),
+      initialLatestWaitTimes: JSON.parse(JSON.stringify(latestWaitTimes)),
       emergencyDepartments
     },
     // revalidate: 30, // In seconds
   }
 }
 
-const Home: NextPage<HomePageProps> = ({ initialLatestReport, emergencyDepartments }) => {
+const Home: NextPage<HomePageProps> = ({ initialLatestWaitTimes, emergencyDepartments }) => {
 
-  const [latestWaitTimesReport, setLatestWaitTimesReport] = useState<WaitTimeReportWithWaitTimes | undefined>(initialLatestReport);
+  const [latestWaitTimes, setLatestWaitTimes] = useState<WaitTime[] | undefined>(initialLatestWaitTimes);
 
   useEffect(() => {
     // Automatically pass info to parent when component mounts
@@ -69,9 +76,28 @@ const Home: NextPage<HomePageProps> = ({ initialLatestReport, emergencyDepartmen
 
 
   api.waitTimes.onReport.useSubscription(undefined, {
+    // When a new WaitTimeReport comes in from the server, update our wait times
     onData(data) {
+      // Type it correctly
+      const waitTimeReport = data as WaitTimeReportWithWaitTimes;
+
+      // Setup variables for new wait times and old ones, to make things clear
+      const newWaitTimes = waitTimeReport.waitTimes;
+      const oldWaitTimes = latestWaitTimes;
+
+      // For each emergency department, check to see if there is a new WaitTime for it
+      // If there is use that new WaitTime, if not, return the previous WaitTime
+      const mergedWaitTimes: WaitTime[] = emergencyDepartments.map(ed => {
+        const EDNewWaitTime = newWaitTimes.find(x => x.emergencyDepartment == ed.slug)
+        return EDNewWaitTime ?? oldWaitTimes?.find(x => x.emergencyDepartment == ed.slug)
+      })
+        // Filter out any emergency departments with no WaitTime
+        .filter((x: WaitTime | undefined): x is WaitTime => {
+          return !!x
+        });
+
       // console.log(data);
-      setLatestWaitTimesReport(data as WaitTimeReportWithWaitTimes);
+      setLatestWaitTimes(mergedWaitTimes);
     },
     onError(error) {
       console.error("Error:", error);
@@ -80,28 +106,21 @@ const Home: NextPage<HomePageProps> = ({ initialLatestReport, emergencyDepartmen
 
   function getWaitTime(emergencyDepartmentSlug: string | undefined) {
     console.log(emergencyDepartmentSlug)
-    return latestWaitTimesReport?.waitTimes.find(x => x.emergencyDepartment === emergencyDepartmentSlug)?.waitTimeMinutes
+    return latestWaitTimes?.find(x => x.emergencyDepartment === emergencyDepartmentSlug)
   }
 
 
 
   return (
     <Layout pageTitle="Home">
-      <h2 className="text-2xl">Emergency Departments</h2>
-      <p className="mb-10 text-sm text-gray-400">Last Updated {latestWaitTimesReport?.createdAt?.toString()}</p>
-      {/* <ol className="flex flex-col space-y-4">
-        {latestWaitTimesReport?.waitTimes.map(waitTime => (
-          <li key={waitTime.id} >
-            <h3 className="text-xl">{waitTime.emergencyDepartment}</h3>
-            <p>Wait Time: {waitTime.waitTimeMinutes} minutes</p>
-          </li>
-        ))}
-      </ol> */}
-      <ol className="flex flex-col space-y-4">
+      <h2 className="text-2xl mb-10">Emergency Departments</h2>
+
+      <ol className="flex flex-col space-y-8">
         {emergencyDepartments.map(emergencyDepartment => (
           <li key={emergencyDepartment.id} >
             <h3 className="text-xl">{emergencyDepartment.name}</h3>
-            <p>Wait Time: {getWaitTime(emergencyDepartment.slug ?? undefined)} minutes</p>
+            <p className="text-sm text-gray-400 mb-1">Last Updated {getWaitTime(emergencyDepartment.slug ?? undefined)?.createdAt?.toString()}</p>
+            <p className="font-bold mb-2">Wait Time: {getWaitTime(emergencyDepartment.slug ?? undefined)?.waitTimeMinutes} minutes</p>
             <ActionButton title="Directions" />&nbsp;|&nbsp;
             <ActionButton title="Call" />&nbsp;|&nbsp;
             <ActionButton title="Website" href={emergencyDepartment.website ?? undefined} target="_blank" />&nbsp;|&nbsp;
