@@ -4,7 +4,7 @@
  *
  * We also create a few inference helpers for input and output types.
  */
-import { httpBatchLink, loggerLink, createWSClient, wsLink } from "@trpc/client";
+import { httpBatchLink, loggerLink, createWSClient, wsLink, splitLink, TRPCWebSocketClient } from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
 import { type NextPageContext } from "next";
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
@@ -17,6 +17,9 @@ const getBaseUrl = () => {
   if (process.env.BASE_URL) return `https://${process.env.BASE_URL}`; // SSR should use vercel url
   return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
 };
+
+let wsClient: TRPCWebSocketClient | undefined = undefined;
+
 
 function getEndingLink(ctx: NextPageContext | undefined) {
   if (typeof window === 'undefined') {
@@ -35,14 +38,37 @@ function getEndingLink(ctx: NextPageContext | undefined) {
     });
   }
 
-  const client = createWSClient({
+  wsClient = wsClient ?? createWSClient({
     url: process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:3001",
     // url: env.NODE_ENV == 'development' ? 'ws://localhost:3001' : 'ws://localhost:3000' //endpoint
     // url: 'ws://localhost:3001' //env.NODE_ENV == 'development' ? 'ws://localhost:3001' : 'ws://localhost:3000' //endpoint
   });
-  return wsLink<AppRouter>({
-    client,
-  });
+
+
+
+
+  return splitLink({
+    // * only use the web socket link if the operation is a subscription
+    condition: (operation) => {
+      return operation.type === 'subscription'
+    },
+
+    true: wsLink<AppRouter>({
+      client: wsClient
+    }),
+
+    // * use the httpBatchLink for everything else (query, mutation)
+    false: httpBatchLink({
+      url: `${getBaseUrl()}/api/trpc`,
+      headers() {
+        if (ctx?.req) {
+          // on ssr, forward client's headers to the server
+          return ctx.req.headers;
+        }
+        return {};
+      }
+    }),
+  })
 }
 
 /** A set of type-safe react-query hooks for your tRPC API. */
