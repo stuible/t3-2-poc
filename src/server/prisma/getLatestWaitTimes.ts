@@ -7,11 +7,12 @@ export default async function getLatestWaitTimes({ prisma, emergencyDepartmentSl
             const waitTime = await prisma.waitTime.findFirst({
                 where: { emergencyDepartment: slug },
                 orderBy: { createdAt: 'desc' },
-            });
+            })
 
-            return waitTime ?? null;
+            return waitTime ?? undefined;
         })
-    );
+    )
+        .then(resolvedPromises => resolvedPromises.filter(x => x));
 
     return waitTimes;
 }
