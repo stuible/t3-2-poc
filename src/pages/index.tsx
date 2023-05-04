@@ -105,7 +105,8 @@ const Home: NextPage<HomePageProps> = ({ initialLatestWaitTimes, emergencyDepart
   });
 
   function getWaitTime(emergencyDepartmentSlug: string | undefined) {
-    console.log(emergencyDepartmentSlug)
+    // console.log(emergencyDepartmentSlug)
+    // console.log(latestWaitTimes)
     return latestWaitTimes?.find(x => x.emergencyDepartment === emergencyDepartmentSlug)
   }
 
