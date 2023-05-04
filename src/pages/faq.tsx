@@ -1,12 +1,7 @@
-import styles from "~/styles/pages/index.module.css";
 import { type NextPage } from "next";
 import Link from "next/link";
 
 import { DocumentRenderer } from '@keystone-6/document-renderer';
-
-// import { createContext } from 'server/context';
-import { getLatestReport } from "~/server/prisma";
-import { prisma } from "~/server/db";
 
 import client from "~/gql/client";
 import GetFAQ from '~/gql/queries/GetFAQ.gql'
@@ -55,7 +50,6 @@ const Home: NextPage<FaqPageProps> = ({ FAQ }) => {
       <article className="prose">
         {FAQ.faq ? <DocumentRenderer document={FAQ.faq.document} /> : false}
       </article>
-
     </Layout>
   );
 };
