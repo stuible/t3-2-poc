@@ -51,8 +51,11 @@ const Home: NextPage<FaqPageProps> = ({ FAQ }) => {
 
   return (
     <Layout pageTitle="FAQ">
-      <h2 className="text-2xl mb-10">{FAQ.title}</h2>
-      {FAQ.faq ? <DocumentRenderer document={FAQ.faq.document} /> : false}
+      <h1 className="text-2xl mb-10">{FAQ.title}</h1>
+      <article className="prose">
+        {FAQ.faq ? <DocumentRenderer document={FAQ.faq.document} /> : false}
+      </article>
+
     </Layout>
   );
 };
