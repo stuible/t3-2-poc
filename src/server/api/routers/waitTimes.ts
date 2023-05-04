@@ -91,9 +91,7 @@ export const waitTimesRouter = createTRPCRouter({
             await redisClient.connect();
         }
 
-
         console.log("publicProcedure.subscription")
-
 
 
         // `resolve()` is triggered for each client when they start subscribing `onFact`
