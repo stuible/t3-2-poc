@@ -118,7 +118,6 @@ export const waitTimesRouter = createTRPCRouter({
             subscriber.connect();
             // }
 
-            console.log('observable<CatFact>')
             const onReport = (channel: string, message: string) => {
                 console.log('onReport()')
                 if (channel === "new-waittimes-report") {
