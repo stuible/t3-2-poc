@@ -24,7 +24,9 @@ export const cacheRouter = createTRPCRouter({
             try {
                 const res: NextApiResponse | null = isNextApiResponse(ctx.res) ? ctx.res : null;
 
-                if (res) input.pages.forEach(async (page) => await res.revalidate(page))
+                if (res) for (const page of input.pages) {
+                    await res.revalidate(page);
+                }
             } catch (error) {
                 console.log(error)
             }
