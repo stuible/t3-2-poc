@@ -20,6 +20,7 @@ export const env = createEnv({
    */
   client: {
     NEXT_PUBLIC_WEBSOCKET_URL: z.string().url().default("ws://localhost:3001"),
+    NEXT_PUBLIC_MAP_API: z.string(),
     // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
   },
 
@@ -33,5 +34,6 @@ export const env = createEnv({
     WAIT_TIMES_API_TOKEN: process.env.WAIT_TIMES_API_TOKEN,
     REDIS_URL: process.env.REDIS_URL,
     NEXT_PUBLIC_WEBSOCKET_URL: process.env.NEXT_PUBLIC_WEBSOCKET_URL,
+    NEXT_PUBLIC_MAP_API: process.env.NEXT_PUBLIC_MAP_API,
   },
 });

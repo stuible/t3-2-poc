@@ -2,6 +2,8 @@ import styles from "~/styles/pages/index.module.css";
 import { type NextPage } from "next";
 import Link from "next/link";
 
+import { env } from "~/env";
+
 // import { createContext } from 'server/context';
 import { getLatestWaitTimes } from "~/server/prisma";
 import { prisma } from "~/server/db";
@@ -10,6 +12,10 @@ import { prisma } from "~/server/db";
 import client from "~/gql/client";
 import GetEmergencyDepartments from '~/gql/queries/GetEmergencyDepartments.gql'
 
+//Maps
+import Map, { Marker, GeolocateControl } from 'react-map-gl';
+import maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 
 
@@ -116,19 +122,40 @@ const Home: NextPage<HomePageProps> = ({ initialLatestWaitTimes, emergencyDepart
     <Layout pageTitle="Home">
       <h2 className="text-2xl mb-10">Emergency Departments</h2>
 
-      <ol className="flex flex-col space-y-8">
-        {emergencyDepartments.map(emergencyDepartment => (
-          <li key={emergencyDepartment.id} >
-            <h3 className="text-xl">{emergencyDepartment.name}</h3>
-            <p className="text-sm text-gray mb-1">Last Updated {getWaitTime(emergencyDepartment.slug ?? undefined)?.createdAt?.toString()}</p>
-            <p className="font-bold mb-2">Wait Time: {getWaitTime(emergencyDepartment.slug ?? undefined)?.waitTimeMinutes} minutes</p>
-            <ActionButton title="Directions" />&nbsp;|&nbsp;
-            <ActionButton title="Call" />&nbsp;|&nbsp;
-            <ActionButton title="Website" href={emergencyDepartment.website ?? undefined} target="_blank" />&nbsp;|&nbsp;
-            <ActionButton title="More Info" href="/faq" />
-          </li>
-        ))}
-      </ol>
+      <div className="grid grid-cols-2 gap-4">
+        <ol className="flex flex-col space-y-8">
+          {emergencyDepartments.map(emergencyDepartment => (
+            <li key={emergencyDepartment.id} >
+              <h3 className="text-xl">{emergencyDepartment.name}</h3>
+              <p className="text-sm text-gray mb-1">Last Updated {getWaitTime(emergencyDepartment.slug ?? undefined)?.createdAt?.toString()}</p>
+              <p className="font-bold mb-2">Wait Time: {getWaitTime(emergencyDepartment.slug ?? undefined)?.waitTimeMinutes} minutes</p>
+              <ActionButton title="Directions" />&nbsp;|&nbsp;
+              <ActionButton title="Call" />&nbsp;|&nbsp;
+              <ActionButton title="Website" href={emergencyDepartment.website ?? undefined} target="_blank" />&nbsp;|&nbsp;
+              <ActionButton title="More Info" href="/faq" />
+            </li>
+          ))}
+        </ol>
+        <div>
+          <Map mapLib={maplibregl}
+            initialViewState={{
+              longitude: -123.11691284179689,
+              latitude: 49.27947621362341,
+              zoom: 12,
+            }}
+            style={{}}
+            mapStyle={`https://api.maptiler.com/maps/streets-v2/style.json?key=${env.NEXT_PUBLIC_MAP_API}`}
+          >
+            {emergencyDepartments.filter(ed => ed.coordinates && ed.coordinates.long && ed.coordinates.lat).map(ed => (
+              <Marker key={ed.id} onClick={() => console.log(`clicked: ${ed.name}`)} longitude={ed.coordinates.long} latitude={ed.coordinates.lat} anchor="center" color="#00FF00" ></Marker>
+            ))}
+
+            <GeolocateControl />
+          </Map>
+        </div>
+      </div>
+
+
     </Layout>
   );
 };

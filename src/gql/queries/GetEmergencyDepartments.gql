@@ -9,5 +9,6 @@ query GetEmergencyDepartments {
     phone
     slug
     website
+    coordinates
   }
 }
