@@ -12,6 +12,9 @@ import { prisma } from "~/server/db";
 import client from "~/gql/client";
 import GetEmergencyDepartments from '~/gql/queries/GetEmergencyDepartments.gql'
 
+import { FaMap, FaPhone, FaInfoCircle, FaCompass } from "react-icons/fa";
+
+
 //Maps
 import Map, { Marker, GeolocateControl } from 'react-map-gl';
 import maplibregl from 'maplibre-gl';
@@ -123,25 +126,25 @@ const Home: NextPage<HomePageProps> = ({ initialLatestWaitTimes, emergencyDepart
     <Layout pageTitle="Home">
       <h2 className="text-2xl mb-10">Emergency Departments</h2>
 
-      <div className="md:grid md:grid-cols-2 gap-4">
+      <div className="md:flex gap-10">
         {/* Emergency Departments */}
-        <ol className="flex flex-col space-y-8">
+        <ol className="flex flex-col space-y-8 max-w-md">
           {emergencyDepartments.map(emergencyDepartment => (
             <li key={emergencyDepartment.id} >
               <h3 className="text-xl">{emergencyDepartment.name}</h3>
               <p className="text-sm text-gray mb-1">Last Updated {getWaitTime(emergencyDepartment.slug ?? undefined)?.createdAt?.toString()}</p>
               <p className="font-bold mb-2">Wait Time: {getWaitTime(emergencyDepartment.slug ?? undefined)?.waitTimeMinutes} minutes</p>
-              <div className="flex gap-2">
-                <ActionButton title="Directions" />
-                <ActionButton title="Call" />
-                <ActionButton title="Website" href={emergencyDepartment.website ?? undefined} target="_blank" />
-                <ActionButton title="More Info" href="/faq" />
+              <div className="grid grid-cols-4 gap-2">
+                <ActionButton title="Directions" icon={<FaMap />} />
+                <ActionButton title="Call" icon={<FaPhone />} />
+                <ActionButton title="Website" icon={<FaCompass />} href={emergencyDepartment.website ?? undefined} target="_blank" />
+                <ActionButton title="More Info" icon={<FaInfoCircle />} href="/faq" />
               </div>
             </li>
           ))}
         </ol>
         {/* Map */}
-        <div className="">
+        <div className="flex-grow">
           <Map mapLib={maplibregl}
             initialViewState={{
               longitude: -123.11691284179689,
