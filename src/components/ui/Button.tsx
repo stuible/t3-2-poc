@@ -1,15 +1,17 @@
 import { ReactNode } from "react";
 import Link from 'next/link'
 
+import clsx from 'clsx';
+
 const Button = (
-    { children, href, target }: { children: ReactNode, href?: string | undefined, target?: string | undefined }
+    { children, href, target, className }: { children: ReactNode, href?: string | undefined, target?: string | undefined, className?: string }
 ) => {
 
     return (href ?
-        <Link href={href} target={target}>
+        <Link href={href} target={target} className={clsx(className)}>
             {children}
         </Link>
-        : <button>
+        : <button className={clsx(className)}>
             {children}
         </button>
     )

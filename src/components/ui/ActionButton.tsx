@@ -5,10 +5,10 @@ const ActionButton = (
     { title, href, target }: { title: string, href?: string | undefined, target?: string | undefined }
 ) => {
     return (
-        <Button href={href} target={target}>
+        <Button href={href} target={target} className="rounded-md bg-blue-lightest p-2 text-blue">
             {/* <span>Icon</span>
             <br /> */}
-            <span>{title}</span>
+            <span className="uppercase text-sm font-bold">{title}</span>
         </Button>
     )
 }
