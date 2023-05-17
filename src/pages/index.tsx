@@ -25,7 +25,8 @@ import { useEffect, useState } from "react";
 import type { WaitTimeReport, WaitTime } from "@prisma/client";
 import Layout from "~/components/Layout";
 import { EmergencyDepartment, Maybe } from "~/gql/types";
-import ActionButton from "~/components/ui/ActionButton";
+
+import { ActionButton } from "~/components/ui"
 
 interface WaitTimeReportWithWaitTimes extends WaitTimeReport {
   waitTimes: WaitTime[];
@@ -122,21 +123,25 @@ const Home: NextPage<HomePageProps> = ({ initialLatestWaitTimes, emergencyDepart
     <Layout pageTitle="Home">
       <h2 className="text-2xl mb-10">Emergency Departments</h2>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="md:grid md:grid-cols-2 gap-4">
+        {/* Emergency Departments */}
         <ol className="flex flex-col space-y-8">
           {emergencyDepartments.map(emergencyDepartment => (
             <li key={emergencyDepartment.id} >
               <h3 className="text-xl">{emergencyDepartment.name}</h3>
               <p className="text-sm text-gray mb-1">Last Updated {getWaitTime(emergencyDepartment.slug ?? undefined)?.createdAt?.toString()}</p>
               <p className="font-bold mb-2">Wait Time: {getWaitTime(emergencyDepartment.slug ?? undefined)?.waitTimeMinutes} minutes</p>
-              <ActionButton title="Directions" />&nbsp;|&nbsp;
-              <ActionButton title="Call" />&nbsp;|&nbsp;
-              <ActionButton title="Website" href={emergencyDepartment.website ?? undefined} target="_blank" />&nbsp;|&nbsp;
-              <ActionButton title="More Info" href="/faq" />
+              <div className="flex gap-2">
+                <ActionButton title="Directions" />
+                <ActionButton title="Call" />
+                <ActionButton title="Website" href={emergencyDepartment.website ?? undefined} target="_blank" />
+                <ActionButton title="More Info" href="/faq" />
+              </div>
             </li>
           ))}
         </ol>
-        <div>
+        {/* Map */}
+        <div className="">
           <Map mapLib={maplibregl}
             initialViewState={{
               longitude: -123.11691284179689,
