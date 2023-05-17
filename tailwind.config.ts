@@ -4,7 +4,13 @@ export default {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     colors: {
-      // 'blue': '#1fb6ff',
+      'red': '#F36B6A',
+      'green': '#39DB76',
+      'blue': {
+        lightest: '#dfe2f3',
+        lighter: '#9AA8ED',
+        DEFAULT: '#2F4AB4',
+      },
       // 'purple': '#7e5bef',
       // 'pink': '#ff49db',
       // 'orange': '#ff7849',
@@ -22,7 +28,11 @@ export default {
       // sans: ['Graphik', 'sans-serif'],
       // serif: ['Merriweather', 'serif'],
     },
-    extend: {},
+    extend: {
+      borderRadius: {
+
+      }
+    },
   },
   plugins: [
     require('@tailwindcss/typography'),
