@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 const Layout = ({ children, pageTitle }: { children: ReactNode, pageTitle?: string }) => {
 
-    const title = pageTitle ? `EDWT - ${pageTitle}` : 'EDWT'
+    const title = pageTitle ? `${pageTitle} - EDWT` : 'EDWT'
 
     return (
         <div>
@@ -19,7 +19,8 @@ const Layout = ({ children, pageTitle }: { children: ReactNode, pageTitle?: stri
                 </h1>
                 <nav>
                     <Link href="/">Home</Link> |
-                    <Link href="/faq"> FAQ</Link>
+                    <Link href="/faq"> FAQ</Link> |
+                    <Link href="/ui"> UI</Link>
                 </nav>
             </header>
             {/* other layout components */}
